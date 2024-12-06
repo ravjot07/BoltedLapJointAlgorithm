@@ -111,4 +111,3 @@ if __name__ == "__main__":
     design = design_lap_joint(P, w, t1, t2)
     for key, value in design.items():
         print(f"{key}: {value}")
-
