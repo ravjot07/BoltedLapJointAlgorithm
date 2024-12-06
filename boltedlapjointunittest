@@ -1,0 +1,52 @@
+import pytest
+from bolted_lap_joint_design import Bolt, Plate, ConnectionDesign
+
+def test_bolt_creation():
+    bolt = Bolt(diameter=12, grade=4.6)
+    assert bolt.diameter == 12
+    assert bolt.grade == 4.6
+    assert bolt.hole_diameter == 13  # Diameter + 1 for 12mm bolts
+    assert bolt.fu == 460  # Grade * 100
+    assert bolt.fy == 184  # Fractional part of grade * fu
+
+def test_plate_creation():
+    plate = Plate(grade="E350", thickness=10)
+    assert plate.grade == "E350"
+    assert plate.thickness == 10
+    assert plate.fy == 350
+    assert plate.fu == 510
+
+def test_connection_design_calculation():
+    bolt = Bolt(diameter=16, grade=5.6)
+    plate = Plate(grade="E250", thickness=12)
+    design = ConnectionDesign(bolt, plate, P=100, w=100, t1=6, t2=6)
+    result = design.calculate_design()
+
+    assert result["Diameter of Bolt"] == 16
+    assert result["Number of Rows"] == 1
+    assert result["Yield Strength of Plate"] == 250
+    assert result["Ultimate Strength of Plate"] == 410
+    assert result["Yield Strength of Bolt"] == 280
+    assert result["Ultimate Strength of Bolt"] == 560
+    assert "efficiency_of_connection" in result
+    assert result["efficiency_of_connection"] <= 1  # Efficiency must not exceed 1
+
+def test_invalid_bolt_diameter():
+    with pytest.raises(ValueError, match="Invalid bolt diameter."):
+        Bolt(diameter=14, grade=4.6)  # Diameter not in predefined list
+
+def test_get_multiple():
+    design = ConnectionDesign(None, None, 0, 0, 0, 0)
+    assert design.get_multiple(17, 5) == 20  # Nearest multiple of 5 greater than 17
+
+def test_design_efficiency():
+    bolt = Bolt(diameter=10, grade=4.6)
+    plate = Plate(grade="E250", thickness=8)
+    design = ConnectionDesign(bolt, plate, P=50, w=50, t1=4, t2=4)
+    result = design.calculate_design()
+
+    assert result["efficiency_of_connection"] <= 1
+
+# Run the tests
+if __name__ == "__main__":
+    pytest.main()
