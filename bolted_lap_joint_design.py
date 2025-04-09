@@ -1,3 +1,7 @@
+import math
+from is800_2007 import IS800_2007
+
+
 def design_lap_joint(P, w, t1, t2):
     """
     Design a bolted lap joint connecting two plates.
@@ -40,7 +44,7 @@ def design_lap_joint(P, w, t1, t2):
             
             # Calculate the shear strength of one bolt
             A_bolt = math.pi * (d / 2) ** 2  # Cross-sectional area of the bolt
-            V_b = IS800_2007.cl_10_3_3_bolt_shear_capacity(bolt_fy, A_bolt, A_bolt, 0, 0, 'Field')  # Shear capacity
+            V_b = IS800_2007.cl_10_3_3_bolt_shear_capacity(bolt_fy, A_bolt, A_bolt, 1, 0, 'Field')  # Shear capacity
             
             # Calculate the required number of bolts
             N_b = math.ceil(P_N / (V_b * 0.75))  # Using a safety factor of 1.33
