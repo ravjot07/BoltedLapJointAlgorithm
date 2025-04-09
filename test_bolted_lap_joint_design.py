@@ -14,8 +14,6 @@ def test_minimum_bolt_design(P, t1, t2):
     else:
         # For any positive load, a design should be found.
         design = design_lap_joint(P, w, t1, t2)
-        # Verify that the design uses at least 2 bolts.
-        # (Your code discards designs with <=2 bolts, so the returned design should have at least 3.)
         assert design["number_of_bolts"] >= 2, (
             f"Design for P={P}, t1={t1}, t2={t2} returned less than 2 bolts."
         )
